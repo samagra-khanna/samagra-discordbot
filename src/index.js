@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { Client, IntentsBitField } = require('discord.js');
+const { Client, IntentsBitField, EmbedBuilder } = require('discord.js');
 
 const client = new Client({
     intents: [
@@ -20,15 +20,52 @@ client.on('messageCreate', (message) => {
     }
 });
 
-client.on('interactionCreate', (interaction) => {
-    if (!interaction.isChatInputCommand()) {
-        return;
+client.on('interactionCreate', async (interaction) => {
+    try {
+        if (interaction.commandName === 'about') {
+            const embed = new EmbedBuilder()
+                .setTitle("Samagra")
+                .setDescription('I am a discord bot made by Samagra for his private server.')
+                .setColor('0x#000000')
+                .addFields({
+                    name: 'Usage',
+                    value: 'Moderation and testing.',
+                    inline: true
+                },
+                    {
+                        name: 'Progress in making me',
+                        value: '10%',
+                        inline: true
+                    }
+                )
+                .setThumbnail('https://i.imgur.com/wxUUcRQ.png');
+            interaction.reply({ embeds: [embed], ephemeral: true });
+        }
+
+        else if (interaction.isButton()) {
+            await interaction.deferReply({ ephemeral: true });
+
+            const role = interaction.guild.roles.cache.get(interaction.customId);
+            if (!role) {
+                interaction.reply({
+                    content: 'Sorry unable to verify you!',
+                    ephemeral: true,
+                });
+                return;
+            }
+
+            const hasRole = interaction.member.roles.cache.has(role.id);
+            if (hasRole) {
+                await interaction.editReply({ content: 'You are already verified, go check other channels.' });
+                return;
+            }
+
+            await interaction.member.roles.add(role);
+            await interaction.editReply(`You have been verified and ${role} role has been assigned to you.`);
+        }
     }
-    if (interaction.commandName === 'hey') {
-        interaction.reply({ content: 'Hey!', ephemeral: true });
-    }
-    if (interaction.commandName === 'ping') {
-        interaction.reply({ content: 'Pong!', ephemeral: true });
+    catch (error) {
+        console.error(error);
     }
 });
 
