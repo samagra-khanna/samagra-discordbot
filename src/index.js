@@ -29,14 +29,9 @@ client.on('interactionCreate', async (interaction) => {
                 .setColor('0x#000000')
                 .addFields({
                     name: 'Usage',
-                    value: 'Moderation and testing.',
+                    value: 'Testing new features of Discord.js',
                     inline: true
                 },
-                    {
-                        name: 'Progress in making me',
-                        value: '10%',
-                        inline: true
-                    }
                 )
                 .setThumbnail('https://i.imgur.com/wxUUcRQ.png');
             interaction.reply({ embeds: [embed], ephemeral: true });
